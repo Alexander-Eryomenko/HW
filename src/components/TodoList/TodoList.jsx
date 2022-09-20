@@ -1,7 +1,7 @@
 import TodoListItem from "../TodoListItem/TodoListItem";
 
 import './TodoList.css'
-
+import PropTypes from "prop-types";
 
 const TodoList = ({todoData, onDelete, showEditModal}) => {
     return (
@@ -16,3 +16,9 @@ const TodoList = ({todoData, onDelete, showEditModal}) => {
 }
 
 export default TodoList
+
+TodoList.propTypes = {
+    todoData: PropTypes.arrayOf(PropTypes.object).isRequired,
+    onDelete: PropTypes.func.isRequired,
+    showEditModal: PropTypes.func.isRequired
+}

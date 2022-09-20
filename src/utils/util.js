@@ -6,7 +6,7 @@ export function getColorStatus (status) {
         case 'Done':
             return 'done';
             break;
-        case 'In progress':
+        case 'In Progress':
             return 'in-progress';
             break;
         default:
