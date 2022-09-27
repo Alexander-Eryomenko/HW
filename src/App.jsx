@@ -1,119 +1,47 @@
+import {useCallback, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+
 import Wrapper from "./components/Wrapper/Wrapper";
 import Header from "./components/Header/Header";
 import TodoList from "./components/TodoList/TodoList";
 import Button from "./components/Button/Button";
-import {headerTitle, addTodoButton, editTodoButton, modalTitleAdd, modalTitleEdit} from "./constants/constants";
-import { v4 as uuidv4 } from 'uuid';
-
-import './App.css';
-import {useCallback, useEffect, useState} from "react";
 import TodoModal from "./components/TodoModal/TodoModal";
 
+import './App.css';
+
+import {headerTitle, addTodoButton, editTodoButton, modalTitleAdd, modalTitleEdit} from "./constants/constants";
+
+import {selectIsAddModalVisible, selectIsEditModalVisible} from "./store/app/selectors";
+import {selectTodoData} from "./store/todoList/selectors";
+import {showAddFormModal} from "./store/app/actions";
+import {setDataFromLocalStorage} from "./store/todoList/actions";
 
 
-// const initialData = [
-//     {
-//         id: uuidv4(),
-//         title: '',
-//         description: 'Learn React',
-//         status: 'Open',
-//         creationDate: '',
-//         updateDate: ''
-//     },
-//     {
-//         id: uuidv4(),
-//         title: '',
-//         description: 'Learn Vue',
-//         status: 'Done',
-//         creationDate: '',
-//         updateDate: ''
-//     },
-//     {
-//         id: uuidv4(),
-//         title: '',
-//         description: 'Learn Angular',
-//         status: 'In progress',
-//         creationDate: '',
-//         updateDate: ''
-//     },
-// ]
-
-function App() {
-    const [data, setData] = useState([])
-    const [showModalAdd, setShowModalAdd] = useState(false)
-    const [showModalEdit, setShowModalEdit] = useState(false)
-    const [currentTaskId, setCurrentTaskId] = useState('')
-
+const App = () => {
+    const data = useSelector(selectTodoData)
+    const isShowAddModal = useSelector(selectIsAddModalVisible)
+    const isShowEditModal = useSelector(selectIsEditModalVisible)
+    const dispatch = useDispatch()
 
     useEffect(() => {
         const dataFromLocalStorage = JSON.parse(localStorage.getItem('todo'))
-        setData(dataFromLocalStorage)
-
-
+        setDataFromLocalStorage(dataFromLocalStorage)
     }, [])
 
     useEffect(() => {
         localStorage.setItem('todo', JSON.stringify(data))
-    }, [data])
+    }, [data, isShowAddModal, isShowEditModal])
 
-    const onAddTodoHandler = (objData) => {
-        if(Object.keys(objData).length === 0) {
-            setShowModalAdd(false)
-            return
-        }
-        setData((prev) => {
-            return [
-                ...prev,
-                objData
-            ]
-        })
-        setShowModalAdd(false)
-    }
-
-    const onEditTodoHandler = (objData, id) => {
-        if(Object.keys(objData).length === 0) {
-            setShowModalEdit(false)
-            return
-        }
-
-        const editTask = data.map(task => {
-            return task.id === currentTaskId ? {
-                ...task,
-                title: objData.title,
-                description: objData.description,
-                status: objData.status,
-                updateDate: objData.updateDate
-            } : task
-        })
-        setData(editTask)
-
-
-        setShowModalEdit(false)
-    }
-
-    const onDeleteHandler = (id) => {
-        const filteredItem = data.filter((item) => item.id !== id)
-        setData(filteredItem)
-    }
-
-    const showModalAddHandler = () => {
-        setShowModalAdd(true)
-    }
-
-    const showModalEditHandler = (id) => {
-
-        setShowModalEdit(true)
-        setCurrentTaskId(id)
-
-    }
-
+    const showModalAddHandler = useCallback(() => {
+        dispatch(showAddFormModal(true))
+    }, [dispatch])
 
   return (
     <Wrapper>
-        {showModalEdit && <TodoModal titleHeader={modalTitleEdit} onAddEditTodoHandler={onEditTodoHandler} btnTitle={editTodoButton} todoData={data} />}
-        {showModalAdd && <TodoModal titleHeader={modalTitleAdd} onAddEditTodoHandler={onAddTodoHandler} btnTitle={addTodoButton} />}
+        {isShowEditModal && <TodoModal titleHeader={modalTitleEdit} btnTitle={editTodoButton} />}
+        {isShowAddModal && <TodoModal titleHeader={modalTitleAdd} btnTitle={addTodoButton} />}
         <Header headerText={headerTitle} />
-        <TodoList todoData={data} onDelete={onDeleteHandler} showEditModal={showModalEditHandler}/>
+        <TodoList todoData={data}/>
         <Button onClick={showModalAddHandler} className={"add-todo-button"} title={addTodoButton} />
     </Wrapper>
   );

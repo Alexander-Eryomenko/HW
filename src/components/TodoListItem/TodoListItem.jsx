@@ -2,21 +2,27 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import './TodoListItem.css'
 import { getColorStatus, fullDate } from "../../utils/util";
 import PropTypes from "prop-types";
-import TodoList from "../TodoList/TodoList";
+import { useDispatch } from 'react-redux'
+import {removeTodoItem} from "../../store/todoList/actions";
+import {showEditFormModal} from "../../store/app/actions";
+import {useCallback, useMemo} from "react";
 
-const TodoListItem = ({task, onDelete, showEditModal}) => {
+const TodoListItem = ({task}) => {
+    const dispatch = useDispatch()
 
     const {id, title, description, status, creationDate, updateDate} = task
 
-    const colorStyleFromStatus = `todo-list-item ${getColorStatus(status)}`
+    const colorStyleFromStatus = useMemo(() => {
+        return `todo-list-item ${getColorStatus(status)}`
+    }, [status])
 
-    const onDeleteHandler = () => {
-        onDelete(id)
-    }
+    const onDeleteHandler = useCallback(() => {
+        dispatch(removeTodoItem(id))
+    }, [dispatch, id])
 
-    const showEditModalHandler = () => {
-        showEditModal(id)
-    }
+    const showEditModalHandler = useCallback(() => {
+        dispatch(showEditFormModal(true, id))
+    }, [dispatch, id])
 
     return (
         <li title="Double click for edit" className={colorStyleFromStatus} onDoubleClick={showEditModalHandler}>
@@ -32,29 +38,24 @@ const TodoListItem = ({task, onDelete, showEditModal}) => {
 
 export default TodoListItem
 
+TodoListItem.propTypes = {
+    task: PropTypes.shape({
+        id: PropTypes.string,
+        title: PropTypes.string,
+        description: PropTypes.string,
+        status: PropTypes.string,
+        creationDate: PropTypes.string,
+        updateDate: PropTypes.string
+    })
+}
 
-
-// Uncaught ReferenceError: Cannot access '__WEBPACK_DEFAULT_EXPORT__' before initialization
-// TodoList.propTypes = {
-//     task: PropTypes.shape({
-//         id: PropTypes.string,
-//         title: PropTypes.string,
-//         description: PropTypes.string,
-//         status: PropTypes.string,
-//         creationDate: PropTypes.string,
-//         updateDate: PropTypes.string
-//     }),
-//     onDelete: PropTypes.func.isRequired,
-//     showEditModal: PropTypes.func.isRequired
-// }
-//
-// TodoList.defaultProps = {
-//     task: PropTypes.shape({
-//         id: '',
-//         title: '',
-//         description: '',
-//         status: '',
-//         creationDate: '',
-//         updateDate: ''
-//     })
-// }
+TodoListItem.defaultProps = {
+    task: PropTypes.shape({
+        id: '',
+        title: '',
+        description: '',
+        status: '',
+        creationDate: '',
+        updateDate: ''
+    })
+}

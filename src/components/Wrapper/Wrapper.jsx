@@ -1,5 +1,3 @@
-
-import PropTypes from "prop-types";
 import './Wrapper.css'
 
 const Wrapper = (props) => {
@@ -11,7 +9,3 @@ const Wrapper = (props) => {
 }
 
 export default Wrapper
-
-// Wrapper.propTypes = {
-//     props.children: PropTypes.element
-// }

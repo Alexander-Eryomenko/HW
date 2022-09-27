@@ -1,25 +1,33 @@
 import Button from "../Button/Button";
 import './TodoModal.css'
-import {useState, useRef, useEffect} from "react";
+import {useState, useRef, useEffect, useCallback} from "react";
 import {addTodoButton} from "../../constants/constants";
 import {fullDate} from "../../utils/util"
 import {v4 as uuidv4} from "uuid";
 import PropTypes from "prop-types";
+import {useDispatch, useSelector} from "react-redux";
+import {showAddFormModal, showEditFormModal} from "../../store/app/actions";
+import {addTodoItem, editTodoItem} from "../../store/todoList/actions";
+import {selectEditItemId} from "../../store/app/selectors";
 
 const optionStatus = ['Open', 'Done', 'In Progress']
 
-const TodoModal = ({titleHeader, onAddEditTodoHandler, btnTitle}) => {
+const TodoModal = ({titleHeader, btnTitle}) => {
+    const dispatch = useDispatch()
+
+    const editItemId = useSelector(selectEditItemId)
+
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [status, setStatus] = useState('')
 
-    console.log(status)
-
     const inputTitleRef = useRef(null)
+    const inputDescriptionRef = useRef(null)
+    const inputStatusRef = useRef(null)
 
     useEffect(() => {
         inputTitleRef.current.focus()
-    }, [inputTitleRef])
+    }, [])
 
     const titleInputHandler = (event) => {
         setTitle(event.target.value)
@@ -30,33 +38,53 @@ const TodoModal = ({titleHeader, onAddEditTodoHandler, btnTitle}) => {
     const statusInputHandler = (event) => {
         setStatus(event.target.value)
     }
-    const addTodoData = () => {
-        if (!title && !description && !status) {
-            onAddEditTodoHandler({})
+    const addTodoData = useCallback(() => {
+        if (!title) {
+            inputTitleRef.current.focus()
             return
         }
-        onAddEditTodoHandler({
+        if (!description) {
+            inputDescriptionRef.current.focus()
+            return
+        }
+        if (!status) {
+            inputStatusRef.current.focus()
+            return
+        }
+        dispatch(addTodoItem({
             id: uuidv4(),
             title,
             description,
             status,
             creationDate: fullDate,
             updateDate: ''
-        })
-    }
+        }))
+        dispatch(showAddFormModal(false))
+    }, [dispatch, title, description, status])
 
-    const editTodoData = () => {
-        if (!title && !description && !status) {
-            onAddEditTodoHandler({})
+    const editTodoData = useCallback(() => {
+        if (!title) {
+            inputTitleRef.current.focus()
             return
         }
-        onAddEditTodoHandler({
+        if (!description) {
+            inputDescriptionRef.current.focus()
+            return
+        }
+        if (!status) {
+            inputStatusRef.current.focus()
+            return
+        }
+        dispatch(editTodoItem({
+            id: editItemId,
             title,
             description,
             status,
             updateDate: fullDate
-        })
-    }
+        }))
+        dispatch(showEditFormModal(false))
+    }, [dispatch, title, description, status])
+
     return (
         <div className="todo-modal">
             <div className="todo-modal__title">{titleHeader}</div>
@@ -66,11 +94,11 @@ const TodoModal = ({titleHeader, onAddEditTodoHandler, btnTitle}) => {
             </label>
             <label htmlFor="description">
                 Description
-                <input onChange={descriptionInputHandler} value={description} id="description" type="text"/>
+                <input ref={inputDescriptionRef} onChange={descriptionInputHandler} value={description} id="description" type="text"/>
             </label>
             <label htmlFor="status">
                 Status
-                <select onChange={statusInputHandler} value={status} id="status">
+                <select ref={inputStatusRef} onChange={statusInputHandler} value={status} id="status">
                     <option value="" selected disabled hidden>Choose status</option>
                     {optionStatus.map((status) => {
                         return (
@@ -89,5 +117,4 @@ export default TodoModal
 TodoModal.propTypes = {
     titleHeader: PropTypes.string.isRequired,
     btnTitle: PropTypes.string.isRequired,
-    onAddEditTodoHandler: PropTypes.func.isRequired
 }

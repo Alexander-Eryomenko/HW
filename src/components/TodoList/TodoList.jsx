@@ -3,12 +3,12 @@ import TodoListItem from "../TodoListItem/TodoListItem";
 import './TodoList.css'
 import PropTypes from "prop-types";
 
-const TodoList = ({todoData, onDelete, showEditModal}) => {
+const TodoList = ({todoData}) => {
     return (
         <ul className="todo-list">
             {todoData.map(task => {
                 return (
-                <TodoListItem task={task} key={task.id} onDelete={onDelete} showEditModal={showEditModal} />
+                <TodoListItem task={task} key={task.id} />
                 )
             })}
         </ul>
@@ -18,7 +18,5 @@ const TodoList = ({todoData, onDelete, showEditModal}) => {
 export default TodoList
 
 TodoList.propTypes = {
-    todoData: PropTypes.arrayOf(PropTypes.object).isRequired,
-    onDelete: PropTypes.func.isRequired,
-    showEditModal: PropTypes.func.isRequired
+    todoData: PropTypes.arrayOf(PropTypes.object),
 }

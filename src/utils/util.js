@@ -2,13 +2,10 @@ export function getColorStatus (status) {
     switch (status) {
         case 'Open':
             return 'open';
-            break;
         case 'Done':
             return 'done';
-            break;
         case 'In Progress':
             return 'in-progress';
-            break;
         default:
             return 'open'
     }
