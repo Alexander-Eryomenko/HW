@@ -2,34 +2,32 @@ import { ADD_TODO_ITEM, EDIT_TODO_ITEM, REMOVE_TODO_ITEM, SET_DATA_FROM_LOCAL_ST
 import { v4 as uuidv4 } from 'uuid';
 
 
-// const initialData = [
-//     {
-//         id: uuidv4(),
-//         title: 'React',
-//         description: 'Learn React',
-//         status: 'Open',
-//         creationDate: '',
-//         updateDate: ''
-//     },
-//     {
-//         id: uuidv4(),
-//         title: 'Vue',
-//         description: 'Learn Vue',
-//         status: 'Done',
-//         creationDate: '',
-//         updateDate: ''
-//     },
-//     {
-//         id: uuidv4(),
-//         title: 'Angular',
-//         description: 'Learn Angular',
-//         status: 'In progress',
-//         creationDate: '',
-//         updateDate: ''
-//     },
-// ]
-
-const initialData = []
+const initialData = [
+    {
+        id: uuidv4(),
+        title: 'React',
+        description: 'Learn React',
+        status: 'Open',
+        creationDate: '',
+        updateDate: ''
+    },
+    {
+        id: uuidv4(),
+        title: 'Vue',
+        description: 'Learn Vue',
+        status: 'Done',
+        creationDate: '',
+        updateDate: ''
+    },
+    {
+        id: uuidv4(),
+        title: 'Angular',
+        description: 'Learn Angular',
+        status: 'In progress',
+        creationDate: '',
+        updateDate: ''
+    }
+]
 
 export const todoReducer = (state = initialData, action) => {
     switch (action.type) {

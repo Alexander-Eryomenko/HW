@@ -1,6 +1,6 @@
 import Button from "../Button/Button";
 import './TodoModal.css'
-import {useState, useRef, useEffect, useCallback} from "react";
+import {useState, useRef, useEffect, useCallback, useMemo} from "react";
 import {addTodoButton} from "../../constants/constants";
 import {fullDate} from "../../utils/util"
 import {v4 as uuidv4} from "uuid";
@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {showAddFormModal, showEditFormModal} from "../../store/app/actions";
 import {addTodoItem, editTodoItem} from "../../store/todoList/actions";
 import {selectEditItemId} from "../../store/app/selectors";
+import {selectTodoData} from "../../store/todoList/selectors";
 
 const optionStatus = ['Open', 'Done', 'In Progress']
 
@@ -16,10 +17,20 @@ const TodoModal = ({titleHeader, btnTitle}) => {
     const dispatch = useDispatch()
 
     const editItemId = useSelector(selectEditItemId)
+    const todoData = useSelector(selectTodoData)
 
-    const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('')
-    const [status, setStatus] = useState('')
+    const element = useMemo(() => {
+        if(!editItemId) {
+            return null
+        }
+        return todoData.find(item => item.id === editItemId)
+     }, [editItemId, todoData] )
+
+    console.log(element)
+
+    const [title, setTitle] = useState(element ? element.title : '')
+    const [description, setDescription] = useState(element ? element.description : '')
+    const [status, setStatus] = useState(element ? element.status : '')
 
     const inputTitleRef = useRef(null)
     const inputDescriptionRef = useRef(null)
