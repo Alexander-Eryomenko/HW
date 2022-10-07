@@ -8,7 +8,7 @@ const TodoList = ({todoData}) => {
         <ul className="todo-list">
             {todoData.map(task => {
                 return (
-                <TodoListItem task={task} key={task.id} />
+                <TodoListItem task={task} key={task.id || Math.random() * 100} />
                 )
             })}
         </ul>

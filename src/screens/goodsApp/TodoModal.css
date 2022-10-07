@@ -13,6 +13,8 @@
     flex-direction: column;
     width: 500px;
     min-height: 200px;
+    border-radius: 15px;
+    z-index: 2;
 }
 
 label {

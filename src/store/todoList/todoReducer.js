@@ -23,7 +23,31 @@ const initialData = [
         id: uuidv4(),
         title: 'Angular',
         description: 'Learn Angular',
-        status: 'In progress',
+        status: 'In Progress',
+        creationDate: '',
+        updateDate: ''
+    },
+    {
+        id: uuidv4(),
+        title: 'A',
+        description: 'A',
+        status: 'Open',
+        creationDate: '',
+        updateDate: ''
+    },
+    {
+        id: uuidv4(),
+        title: 'B',
+        description: 'B',
+        status: 'Done',
+        creationDate: '',
+        updateDate: ''
+    },
+    {
+        id: uuidv4(),
+        title: 'C',
+        description: 'C',
+        status: 'In Progress',
         creationDate: '',
         updateDate: ''
     }

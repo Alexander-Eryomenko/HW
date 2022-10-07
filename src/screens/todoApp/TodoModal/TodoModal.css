@@ -1,0 +1,34 @@
+.todo-modal {
+    background-color: #fff;
+    display: flex;
+    justify-content: space-around;
+    row-gap: 10px;
+    align-items: center;
+    align-self: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 0;
+    flex-direction: column;
+    width: 500px;
+    min-height: 200px;
+    border-radius: 15px;
+    z-index: 2;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+input, select {
+    width: 400px;
+    padding: 5px;
+}
+
+.todo-modal__title {
+    margin-bottom: 20px;
+}

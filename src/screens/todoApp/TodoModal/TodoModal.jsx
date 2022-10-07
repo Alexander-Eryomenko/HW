@@ -1,32 +1,36 @@
-import Button from "../Button/Button";
-import './TodoModal.css'
 import {useState, useRef, useEffect, useCallback, useMemo} from "react";
-import {addTodoButton} from "../../constants/constants";
-import {fullDate} from "../../utils/util"
+
+import './TodoModal.css'
+
+import {addTodoButton} from "../../../constants/constants";
+
+import {fullDate} from "../../../utils/util"
+
+import {addTodoItem, editTodoItem} from "../../../store/todoList/actions";
+import {selectTodoData} from "../../../store/todoList/selectors";
+
 import {v4 as uuidv4} from "uuid";
 import PropTypes from "prop-types";
 import {useDispatch, useSelector} from "react-redux";
-import {showAddFormModal, showEditFormModal} from "../../store/app/actions";
-import {addTodoItem, editTodoItem} from "../../store/todoList/actions";
-import {selectEditItemId} from "../../store/app/selectors";
-import {selectTodoData} from "../../store/todoList/selectors";
+import {useNavigate, useParams } from 'react-router-dom'
+import {Button, Typography, TextField} from '@mui/material'
 
 const optionStatus = ['Open', 'Done', 'In Progress']
 
 const TodoModal = ({titleHeader, btnTitle}) => {
     const dispatch = useDispatch()
+    const { itemId } = useParams()
 
-    const editItemId = useSelector(selectEditItemId)
+    const navigate = useNavigate()
+
     const todoData = useSelector(selectTodoData)
 
     const element = useMemo(() => {
-        if(!editItemId) {
+        if(!itemId) {
             return null
         }
-        return todoData.find(item => item.id === editItemId)
-     }, [editItemId, todoData] )
-
-    console.log(element)
+        return todoData.find(item => item.id === itemId)
+     }, [itemId, todoData] )
 
     const [title, setTitle] = useState(element ? element.title : '')
     const [description, setDescription] = useState(element ? element.description : '')
@@ -70,8 +74,8 @@ const TodoModal = ({titleHeader, btnTitle}) => {
             creationDate: fullDate,
             updateDate: ''
         }))
-        dispatch(showAddFormModal(false))
-    }, [dispatch, title, description, status])
+        navigate('/todo-app')
+    }, [dispatch, navigate, title, description, status])
 
     const editTodoData = useCallback(() => {
         if (!title) {
@@ -87,26 +91,42 @@ const TodoModal = ({titleHeader, btnTitle}) => {
             return
         }
         dispatch(editTodoItem({
-            id: editItemId,
+            id: itemId,
             title,
             description,
             status,
             updateDate: fullDate
         }))
-        dispatch(showEditFormModal(false))
-    }, [dispatch, title, description, status])
+        navigate('/todo-app')
+    }, [dispatch, navigate, title, description, status])
 
     return (
         <div className="todo-modal">
-            <div className="todo-modal__title">{titleHeader}</div>
-            <label htmlFor="title">
-                Title
-                <input ref={inputTitleRef} onChange={titleInputHandler} value={title} id="title" type="text"/>
-            </label>
-            <label htmlFor="description">
-                Description
-                <input ref={inputDescriptionRef} onChange={descriptionInputHandler} value={description} id="description" type="text"/>
-            </label>
+            <Typography align="center" variant="h6" component="div">{titleHeader}</Typography>
+            <TextField
+                inputRef={inputTitleRef}
+                onChange={titleInputHandler}
+                value={title}
+                sx={{width: 400}}
+                type="text"
+                id="title"
+                placeholder="Enter title"
+                size="small"
+                label="Title"
+                variant="outlined"
+            />
+            <TextField
+                inputRef={inputDescriptionRef}
+                onChange={descriptionInputHandler}
+                value={description}
+                sx={{width: 400}}
+                type="text"
+                id="description"
+                placeholder="Enter description"
+                size="small"
+                label="Description"
+                variant="outlined"
+            />
             <label htmlFor="status">
                 Status
                 <select ref={inputStatusRef} onChange={statusInputHandler} value={status} id="status">
@@ -118,7 +138,13 @@ const TodoModal = ({titleHeader, btnTitle}) => {
                     })}
                 </select>
             </label>
-            <Button onClick={btnTitle === addTodoButton ? addTodoData : editTodoData} className={"add-todo-button edit-todo-button"} title={btnTitle}/>
+            <Button
+                color="success"
+                onClick={btnTitle === addTodoButton ? addTodoData : editTodoData}
+                sx={{maxWidth: 128, margin: '0 auto'}}
+                variant="contained"
+            >{btnTitle}
+            </Button>
         </div>
     )
 }

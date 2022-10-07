@@ -1,48 +1,35 @@
-import {useCallback, useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React from "react";
 
 import Wrapper from "./components/Wrapper/Wrapper";
-import Header from "./components/Header/Header";
-import TodoList from "./components/TodoList/TodoList";
-import Button from "./components/Button/Button";
-import TodoModal from "./components/TodoModal/TodoModal";
+import WelcomePage from "./screens/WelcomePage";
+import TodoApp from "./screens/todoApp/TodoApp";
+import GoodsApp from "./screens/goodsApp/GoodsApp";
+import TodoModal from "./screens/todoApp/TodoModal/TodoModal";
+import GoodsFormModal from "./screens/goodsApp/GoodsFormModal";
+import NotFoundPage from "./screens/NotFoundPage";
 
 import './App.css';
 
-import {headerTitle, addTodoButton, editTodoButton, modalTitleAdd, modalTitleEdit} from "./constants/constants";
+import {addTodoButton, editTodoButton, modalTitleAdd, modalTitleEdit} from "./constants/constants";
 
-import {selectIsAddModalVisible, selectIsEditModalVisible} from "./store/app/selectors";
-import {selectTodoData} from "./store/todoList/selectors";
-import {showAddFormModal} from "./store/app/actions";
-import {setDataFromLocalStorage} from "./store/todoList/actions";
+import {Routes, Route} from "react-router-dom";
 
 
 const App = () => {
-    const data = useSelector(selectTodoData)
-    const isShowAddModal = useSelector(selectIsAddModalVisible)
-    const isShowEditModal = useSelector(selectIsEditModalVisible)
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        const dataFromLocalStorage = JSON.parse(localStorage.getItem('todo'))
-        setDataFromLocalStorage(dataFromLocalStorage)
-    }, [])
-
-    useEffect(() => {
-        localStorage.setItem('todo', JSON.stringify(data))
-    }, [data, isShowAddModal, isShowEditModal])
-
-    const showModalAddHandler = useCallback(() => {
-        dispatch(showAddFormModal(true))
-    }, [dispatch])
-
   return (
     <Wrapper>
-        {isShowEditModal && <TodoModal titleHeader={modalTitleEdit} btnTitle={editTodoButton} />}
-        {isShowAddModal && <TodoModal titleHeader={modalTitleAdd} btnTitle={addTodoButton} />}
-        <Header headerText={headerTitle} />
-        <TodoList todoData={data}/>
-        <Button onClick={showModalAddHandler} className={"add-todo-button"} title={addTodoButton} />
+        <Routes>
+            <Route path="/" element={<WelcomePage />} />
+            <Route path="/todo-app" element={<TodoApp />}>
+                <Route path="edit-task/:itemId" element={<TodoModal titleHeader={modalTitleEdit} btnTitle={editTodoButton} />} />
+                <Route path="add-task" element={<TodoModal titleHeader={modalTitleAdd} btnTitle={addTodoButton} />} />
+            </Route>
+            <Route path="/goods-app" element={<GoodsApp />}>
+                <Route path="edit-goods/:itemId" element={<GoodsFormModal titleHeader={modalTitleEdit} btnTitle={editTodoButton} />}/>
+                <Route path="add-goods" element={<GoodsFormModal titleHeader={modalTitleAdd} btnTitle={addTodoButton} />}/>
+            </Route>
+            <Route path="*" element={<NotFoundPage />} />
+        </Routes>
     </Wrapper>
   );
 }
